@@ -1,24 +1,16 @@
-#!groovy
-
 pipeline {
-	agent none
-  stages {
-  	stage('Maven Install') {
-    	agent {
-      	docker {
-        	image 'maven:3.5.0'
+    agent {
+        docker {
+            image 'maven:3.8.1-adoptopenjdk-11'
+            args '-u Tom'
+            args '-v /root/.m2:/root/.m2' 
         }
-      }
-      steps {
-      	// sh 'mvn clean install'
-        sh './mvnw package'
-      }
     }
-    // stage('Docker Build') {
-    // 	agent any
-    //   steps {
-    //   	sh 'docker build -t shanem/spring-petclinic:latest .'
-    //   }
-    // }
-  }
+    stages {
+        stage('Build') { 
+            steps {
+                sh 'mvn clean install -Dcheckstyle.skip' 
+            }
+        }
+    }
 }

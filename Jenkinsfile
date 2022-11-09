@@ -12,5 +12,10 @@ pipeline {
                 sh 'mvn clean install -Dcheckstyle.skip' 
             }
         }
+        stage('Run') {
+            steps {
+                sh 'java -jar target/*.jar'
+            }
+        }
     }
 }

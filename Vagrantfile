@@ -11,10 +11,11 @@ Vagrant.configure("2") do |config|
   config.vm.network "forwarded_port", guest: 8081, host: 8080
   # Jenkins docker provision
   config.vm.provision "docker" do |d|
-    d.pull_images "liatrio/jenkins-alpine"
+    d.build_image "/vagrant/jenkins/"
+      args: "-t myjenkins-blueocean:2.361.3-1"
     d.run "myjenkins-blueocean",
-      image: "liatrio/jenkins-alpine",
-      args: "-p '8081:8080' -v '/var/run/docker.sock:/var/run/docker.sock'"
+      image: "myjenkins-blueocean:2.361.3-1",
+      args: "--env DOCKER_HOST=tcp://docker:2376 --env DOCKER_CERT_PATH=/certs/client --env DOCKER_TLS_VERIFY=1 --volume jenkins-data:/var/jenkins_home --volume jenkins-docker-certs:/certs/client:ro --volume "%HOMEDRIVE%%HOMEPATH%":/home --restart=on-failure --env JAVA_OPTS="-Dhudson.plugins.git.GitSCM.ALLOW_LOCAL_CHECKOUT=true" --publish 8081:8080 --publish 50000:50000"
   end
 end
 

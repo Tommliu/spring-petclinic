@@ -1,3 +1,3 @@
 FROM anapsix/alpine-java 
-COPY target/*.jar /home/petclinic.jar 
+COPY spring-petclinic-2.7.3.jar /home/petclinic.jar 
 CMD ["java","-jar","/home/petclinic.jar"]

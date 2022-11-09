@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+  jenkins-blueocean:
+    image: myjenkins-blueocean:2.361.3-1
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    networks:
+      - jenkins
+    environment:
+      - DOCKER_CERT_PATH=/certs/client
+      - DOCKER_TLS_VERIFY=1
+    volumes:
+      - "../jenkins-data:/var/jenkins_home"
+      - "../jenkins-docker-certs:/certs/client:ro"
+  sonarqube:
+    image: sonarqube:lts
+    ports:
+      - 9000:9000
+    networks:
+      - jenkins
+    environment:
+      - SONAR_FORCEAUTHENTICATION=false
+
+networks:
+  jenkins: {}
+  

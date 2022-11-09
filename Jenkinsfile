@@ -1,24 +1,28 @@
 pipeline {
     agent none
     stages {
+        stage('Sonarqube') {
+            environment {
+                scannerHome = tool 'SonarQubeScanner'
+            }
+            steps {
+                withSonarQubeEnv('sonarqube') {
+                    sh "${scannerHome}/bin/sonar-scanner"
+                }
+                timeout(time: 10, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
         stage('Build') { 
             agent {
-            docker {
+                docker {
                     image 'maven:3.8.1-adoptopenjdk-11'
-                    args '-u Tom'
                     args '-v /root/.m2:/root/.m2'
-                    args '-v /var/run/docker.sock:/var/run/docker.sock'
                 }
             }
             steps {
                 sh 'mvn clean install -Dcheckstyle.skip' 
-            }
-        }
-        stage('App Docker Build') {
-            agent any
-            steps {
-                sh 'docker ps'
-                sh 'docker build -t petclinic:latest app/' 
             }
         }
     }

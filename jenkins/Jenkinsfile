@@ -12,9 +12,9 @@ pipeline {
                 sh 'mvn clean install -Dcheckstyle.skip' 
             }
         }
-        stage('Deliver') { 
+        stage('App docker build') { 
             steps {
-                sh './jenkins/scripts/deliver.sh' 
+                sh 'docker build -t petclinic:latest app/' 
             }
         }
     }

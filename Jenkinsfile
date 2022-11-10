@@ -3,11 +3,9 @@ pipeline {
     stages {
         stage('Sonarqube') {
             agent any
-            environment {
-                scannerHome = tool 'SonarQubeScanner'
-            }
             steps {
-                withSonarQubeEnv('sonarqube') {
+                def scannerHome = tool name: 'sonar_scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation';
+                withSonarQubeEnv('SonarQube') {
                     sh "${scannerHome}/bin/sonar-scanner"
                 }
                 timeout(time: 10, unit: 'MINUTES') {

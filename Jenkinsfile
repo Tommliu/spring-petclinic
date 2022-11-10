@@ -1,6 +1,20 @@
 pipeline {
     agent none
     stages {
+        stage('Sonarqube') {
+            agent any
+            environment {
+                scannerHome = tool 'SonarQubeScanner'
+            }
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=develop -Dsonar.java.binaries=. -Dsonar.sources=./src"
+                }
+                timeout(time: 10, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
         stage('Build') { 
             agent {
                 docker {
@@ -12,19 +26,6 @@ pipeline {
                 sh 'mvn clean install -Dcheckstyle.skip' 
             }
         }
-        stage('Sonarqube') {
-            agent any
-            environment {
-                scannerHome = tool 'SonarQubeScanner'
-            }
-            steps {
-                withSonarQubeEnv('SonarQube') {
-                    sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=develop -Dsonar.java.binaries=./target/classes -Dsonar.sources=./src"
-                }
-                timeout(time: 10, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
-                }
-            }
-        }
+        
     }
 }

@@ -1,0 +1,9 @@
+---
+- hosts: app_server
+  become: yes
+  become_user: root
+  tasks:  
+   - name: Start petclinic
+     shell: java -jar "/spring-petclinic-2.7.3.jar"
+
+...
